@@ -33,13 +33,20 @@ jobs:
           wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O tools.zip
           unzip tools.zip
           mv cmdline-tools latest || true
-          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0" "ndk;25.1.8937393"
 
-      - name: Set ENV for Buildozer
+          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --install \
+              "platform-tools" \
+              "platforms;android-34" \
+              "build-tools;34.0.0" \
+              "ndk;25.1.8937393"
+
+          ls -R $HOME/android-sdk
+
+      - name: Fix AIDL PATH
         run: |
-          echo "export ANDROIDSDK=$HOME/android-sdk" >> $GITHUB_ENV
-          echo "export ANDROIDNDK=$HOME/android-sdk/ndk/25.1.8937393" >> $GITHUB_ENV
+          mkdir -p /home/runner/.buildozer/android/platform/android-sdk
+          ln -sf $HOME/android-sdk/build-tools /home/runner/.buildozer/android/platform/android-sdk/build-tools
 
       - name: Build APK
         env:
