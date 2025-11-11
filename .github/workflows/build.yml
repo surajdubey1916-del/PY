@@ -8,31 +8,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
 
-      - name: Install Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
 
-      - name: Install system dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y python3-pip python3-setuptools git zip
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget unzip
+        pip install --upgrade pip setuptools wheel cython buildozer
 
-      - name: Install buildozer
-        run: |
-          pip install --upgrade pip
-          pip install buildozer
+    - name: Install Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
 
-      - name: Install Android SDK/NDK
-        run: |
-          sudo apt-get install -y openjdk-17-jdk
-          buildozer android debug
+    - name: Install Android SDK
+      uses: android-actions/setup-android@v3
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: kivy-apk
-          path: bin/*.apk
+    - name: Build APK
+      run: |
+        buildozer android debug
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: kivy-apk
+        path: bin/*.apk
