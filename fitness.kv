@@ -1,0 +1,637 @@
+MDNavigationLayout:
+    MDScreenManager:
+        id: screen_manager
+        
+        # Original Home Screen
+        MDScreen:
+            name: "home"
+            MDTopAppBar:
+                title: "Fitness Pro App"
+                pos_hint: {"top": 1}
+                left_action_items: [["menu", lambda x: nav_drawer.set_state("toggle")]]
+                right_action_items: [["dumbbell", lambda x: app.switch_to_workout_library()], ["robot", lambda x: app.switch_to_personalization()], ["history", lambda x: app.switch_to_history()]]
+            
+            MDCard:
+                style: "outlined"
+                line_color: app.theme_cls.primary_color
+                size_hint: 0.9, None
+                height: dp(175)
+                pos_hint: {'center_x': 0.5, 'top': 0.85}
+                radius: dp(20)
+                padding: dp(15)
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    spacing: dp(20)
+                    adaptive_height: True
+                    MDLabel:
+                        text: "Training"
+                        halign: 'left'
+                        font_style: 'H4'
+                        bold: True
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        adaptive_height: True
+                        spacing: dp(10)
+
+                        MDDropDownItem:
+                            id: dropdown_item
+                            on_release: app.open_menu()
+                            size_hint_x: 0.7
+
+                        MDIconButton:
+                            icon: "plus"
+                            tooltip_text: "Add"
+                            on_release: app.my_plus_function()
+                            size_hint_x: 0.15
+                            pos_hint: {"center_y": 0.5}
+                        
+                        MDIconButton:
+                            icon: "trash-can-outline"
+                            tooltip_text: "Delete Selected Plan"
+                            on_release: app.confirm_delete_plan()
+                            size_hint_x: 0.15
+                            pos_hint: {"center_y": 0.5}
+                            theme_text_color: "Error"
+                            
+                    MDRaisedButton:
+                        text: "START TRAINING"
+                        on_release: app.start_training()
+                        pos_hint: {'center_x': 0.5}
+            MDCard:
+                style: "outlined"
+                line_color: app.theme_cls.primary_color
+                size_hint: 0.9, None
+                height: dp(290)
+                pos_hint: {'center_x': 0.5, 'top': 0.5}
+                radius: dp(20)
+                padding: dp(15)
+                orientation: 'vertical'
+                MDLabel:
+                    text: "Progress"
+                    font_style: "H6"
+                    halign: "center"
+                    bold: True
+                    size_hint_y: None
+                    height: dp(30)
+                MDDropDownItem:
+                    id: graph_dropdown
+                    halign: 'left'
+                    text: "Calories Burned"
+                    pos_hint: {'center_x': 0.5}
+                    on_release: app.open_graph_menu()
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    id: graph_box
+                    padding: dp(10)
+
+        # Workout Library Screen
+        MDScreen:
+            name: "workout_library"
+            MDBoxLayout:
+                orientation: 'vertical'
+                MDTopAppBar:
+                    id: workout_library_top_bar
+                    title: "Workout Library"
+                    pos_hint: {"top": 1}
+                    elevation: 4
+                    left_action_items: [["arrow-left", lambda x: app.switch_to_home()]]
+                    right_action_items: [["plus", lambda x: app.show_add_workout_dialog()]]
+                
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    height: dp(150)
+                    padding: "10dp"
+                    spacing: "10dp"
+                    
+                    MDLabel:
+                        text: "Pre-Set Workout Library"
+                        theme_text_color: "Primary"
+                        font_size: "24sp"
+                        bold: True
+                        size_hint_y: None
+                        height: dp(50)
+                    
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: dp(60)
+                        spacing: "10dp"
+                        
+                        MDTextField:
+                            id: search_field
+                            hint_text: "Search workouts..."
+                            size_hint_x: 0.7
+                            on_text: app.filter_workouts(self.text)
+                        
+                        MDTextButton:
+                            text: "Filter"
+                            size_hint_x: 0.3
+                            on_release: app.open_filter_menu()
+                
+                ScrollView:
+                    do_scroll_x: False
+                    do_scroll_y: True
+                    
+                    MDBoxLayout:
+                        id: workout_list
+                        orientation: 'vertical'
+                        spacing: "10dp"
+                        adaptive_height: True
+                        padding: "10dp"
+                        size_hint_y: None
+
+        # AI Personalization Screen
+        MDScreen:
+            name: "personalization"
+            
+            MDBoxLayout:
+                orientation: 'vertical'
+                
+                MDTopAppBar:
+                    title: "AI Fitness Plan Generator"
+                    elevation: 4
+                    left_action_items: [["arrow-left", lambda x: app.switch_to_home()]]
+                
+                MDScrollView:
+                    do_scroll_x: False
+
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: "20dp"
+                        adaptive_height: True
+                        padding: "20dp"
+
+                        MDLabel:
+                            text: "Create Your Personalized Plan"
+                            theme_text_color: "Primary"
+                            font_style: "H4"
+                            halign: "center"
+                            bold: True
+                            size_hint_y: None
+                            height: "50dp"
+
+                        MDCard:
+                            orientation: 'vertical'
+                            padding: "20dp"
+                            spacing: "15dp"
+                            size_hint_y: None
+                            height: "400dp"
+                            elevation: 2
+
+                            MDLabel:
+                                text: "Personal Information"
+                                theme_text_color: "Primary"
+                                font_style: "H5"
+                                bold: True
+
+                            MDBoxLayout:
+                                orientation: 'horizontal'
+                                spacing: "10dp"
+                                size_hint_y: None
+                                height: "60dp"
+
+                                MDTextField:
+                                    id: age_field
+                                    hint_text: "Age"
+                                    input_filter: 'int'
+                                    size_hint_x: 0.5
+
+                                MDDropDownItem:
+                                    id: gender_dropdown
+                                    text: "Select Gender"
+                                    size_hint_x: 0.5
+                                    on_release: app.open_gender_menu()
+
+                            MDBoxLayout:
+                                orientation: 'horizontal'
+                                spacing: "10dp"
+                                size_hint_y: None
+                                height: "60dp"
+
+                                MDTextField:
+                                    id: height_field
+                                    hint_text: "Height (cm)"
+                                    input_filter: 'float'
+                                    size_hint_x: 0.5
+
+                                MDTextField:
+                                    id: weight_field
+                                    hint_text: "Current Weight (kg)"
+                                    input_filter: 'float'
+                                    size_hint_x: 0.5
+
+                            MDTextField:
+                                id: goal_weight_field
+                                hint_text: "Goal Weight (kg)"
+                                input_filter: 'float'
+
+                            MDTextField:
+                                id: goal_time_field
+                                hint_text: "Target Time (weeks)"
+                                input_filter: 'int'
+
+                        MDCard:
+                            orientation: 'vertical'
+                            padding: "20dp"
+                            spacing: "15dp"
+                            size_hint_y: None
+                            height: "350dp"
+                            elevation: 2
+
+                            MDLabel:
+                                text: "Health Conditions"
+                                theme_text_color: "Primary"
+                                font_style: "H5"
+                                bold: True
+
+                            MDLabel:
+                                text: "Selected Conditions:"
+                                theme_text_color: "Secondary"
+                                font_style: "Body2"
+                                size_hint_y: None
+                                height: "30dp"
+
+                            MDBoxLayout:
+                                id: conditions_chip_box
+                                orientation: 'vertical'
+                                spacing: "10dp"
+                                adaptive_height: True
+                                size_hint_y: None
+                                height: "100dp"
+
+                            MDBoxLayout:
+                                orientation: 'horizontal'
+                                spacing: "10dp"
+                                size_hint_y: None
+                                height: "50dp"
+
+                                MDTextButton:
+                                    text: "Add Condition"
+                                    on_release: app.open_conditions_menu()
+
+                                MDTextButton:
+                                    text: "Clear All"
+                                    on_release: app.clear_conditions()
+                                    theme_text_color: "Error"
+
+                        MDCard:
+                            orientation: 'vertical'
+                            padding: "20dp"
+                            spacing: "15dp"
+                            size_hint_y: None
+                            height: "300dp"
+                            elevation: 2
+
+                            MDLabel:
+                                text: "Fitness Goals & Preferences"
+                                theme_text_color: "Primary"
+                                font_style: "H5"
+                                bold: True
+
+                            MDDropDownItem:
+                                id: activity_dropdown
+                                text: "Select Activity Level"
+                                on_release: app.open_activity_menu()
+
+                            MDDropDownItem:
+                                id: goal_dropdown
+                                text: "Select Primary Goal"
+                                on_release: app.open_goal_menu()
+
+                            MDDropDownItem:
+                                id: diet_dropdown
+                                text: "Select Diet Preference"
+                                on_release: app.open_diet_menu()
+
+                            MDDropDownItem:
+                                id: budget_dropdown
+                                text: "Select Budget Level"
+                                on_release: app.open_budget_menu()
+
+                        MDRaisedButton:
+                            text: "Generate AI-Powered Plan"
+                            size_hint_y: None
+                            height: "50dp"
+                            on_release: app.generate_ai_plan()
+                            pos_hint: {"center_x": 0.5}
+
+        # AI Plan Display Screen
+        MDScreen:
+            name: "plan_display"
+            
+            MDBoxLayout:
+                orientation: 'vertical'
+                
+                MDTopAppBar:
+                    title: "Your AI-Powered Plan"
+                    elevation: 4
+                    left_action_items: [["arrow-left", lambda x: app.switch_to_personalization()]]
+
+                MDBoxLayout:
+                    id: ai_banner
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: "40dp"
+                    md_bg_color: app.theme_cls.primary_color
+                    padding: "10dp"
+                    spacing: "10dp"
+
+                    MDLabel:
+                        text: "🤖 AI-POWERED PLAN (Gemini 2.0 Flash)"
+                        theme_text_color: "Custom"
+                        text_color: "white"
+                        bold: True
+                        halign: "center"
+                        size_hint_x: 0.8
+
+                    MDIconButton:
+                        icon: "robot"
+                        theme_text_color: "Custom"
+                        text_color: "white"
+                        size_hint_x: 0.2
+
+                MDScrollView:
+                    do_scroll_x: False
+
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: "20dp"
+                        adaptive_height: True
+                        padding: "20dp"
+
+                        MDCard:
+                            orientation: 'vertical'
+                            padding: "20dp"
+                            spacing: "15dp"
+                            size_hint_y: None
+                            adaptive_height: True
+                            elevation: 2
+
+                            MDLabel:
+                                text: "Nutrition Plan"
+                                theme_text_color: "Primary"
+                                font_style: "H5"
+                                bold: True
+
+                            ScrollView:
+                                size_hint_y: None
+                                height: "300dp"
+                                
+                                MDLabel:
+                                    id: nutrition_plan
+                                    text: ""
+                                    theme_text_color: "Secondary"
+                                    size_hint_y: None
+                                    height: self.texture_size[1]
+                                    text_size: self.width, None
+
+                        MDCard:
+                            orientation: 'vertical'
+                            padding: "20dp"
+                            spacing: "15dp"
+                            size_hint_y: None
+                            adaptive_height: True
+                            elevation: 2
+
+                            MDLabel:
+                                text: "Workout Plan"
+                                theme_text_color: "Primary"
+                                font_style: "H5"
+                                bold: True
+
+                            ScrollView:
+                                size_hint_y: None
+                                height: "400dp"
+                                
+                                MDLabel:
+                                    id: workout_plan
+                                    text: ""
+                                    theme_text_color: "Secondary"
+                                    size_hint_y: None
+                                    height: self.texture_size[1]
+                                    text_size: self.width, None
+
+                        MDCard:
+                            orientation: 'vertical'
+                            padding: "20dp"
+                            spacing: "15dp"
+                            size_hint_y: None
+                            adaptive_height: True
+                            elevation: 2
+
+                            MDLabel:
+                                text: "Important Notes"
+                                theme_text_color: "Primary"
+                                font_style: "H5"
+                                bold: True
+
+                            ScrollView:
+                                size_hint_y: None
+                                height: "200dp"
+                                
+                                MDLabel:
+                                    id: important_notes
+                                    text: ""
+                                    theme_text_color: "Secondary"
+                                    size_hint_y: None
+                                    height: self.texture_size[1]
+                                    text_size: self.width, None
+
+                        MDBoxLayout:
+                            orientation: 'horizontal'
+                            spacing: "10dp"
+                            size_hint_y: None
+                            height: "50dp"
+
+                            MDRaisedButton:
+                                text: "Save This Plan"
+                                size_hint_x: 0.5
+                                on_release: app.save_ai_plan()
+
+                            MDRaisedButton:
+                                text: "Back to Home"
+                                size_hint_x: 0.5
+                                on_release: app.switch_to_home()
+
+        # Saved Plans Screen
+        MDScreen:
+            name: "saved_plans"
+            
+            MDBoxLayout:
+                orientation: 'vertical'
+                
+                MDTopAppBar:
+                    title: "Saved Plans"
+                    elevation: 4
+                    left_action_items: [["arrow-left", lambda x: app.switch_to_home()]]
+
+                MDScrollView:
+                    do_scroll_x: False
+
+                    MDList:
+                        id: saved_plans_list
+
+        # Workout History Screen
+        MDScreen:
+            name: "history"
+            MDBoxLayout:
+                orientation: 'vertical'
+                MDTopAppBar:
+                    title: "Workout History"
+                    pos_hint: {"top": 1}
+                    left_action_items: [["arrow-left", lambda x: app.switch_to_home()]]
+                
+                MDScrollView:
+                    MDList:
+                        id: history_list
+
+        # Workout Screen
+        WorkoutScreen:
+            name: "workout"
+
+    MDNavigationDrawer:
+        id: nav_drawer
+        elevation: .25
+        scrim_color: 0, 0, 0, 0.1
+        MDScrollView:
+            MDBoxLayout:
+                id: drawer_content
+                orientation: 'vertical'
+                adaptive_height: True
+                padding: dp(8)
+                spacing: dp(10)
+                
+                MDLabel:
+                    text: "Current User"
+                    font_style: "H6"
+                    size_hint_y: None
+                    height: dp(40)
+                    padding: [dp(10), 0]
+                
+                MDDropDownItem:
+                    id: user_dropdown_item
+                    text: "Default User"
+                    on_release: app.open_user_menu()
+                
+                MDLabel:
+                    text: "Navigation"
+                    font_style: "H6"
+                    size_hint_y: None
+                    height: dp(40)
+                    padding: [dp(10), 0]
+                
+                MDTextButton:
+                    text: "Home Dashboard"
+                    on_release: app.switch_to_home()
+                    theme_text_color: "Primary"
+                    padding: [dp(20), dp(10)]
+                
+                MDTextButton:
+                    text: "Workout Library"
+                    on_release: app.switch_to_workout_library()
+                    theme_text_color: "Primary"
+                    padding: [dp(20), dp(10)]
+                
+                MDTextButton:
+                    text: "AI Plan Generator"
+                    on_release: app.switch_to_personalization()
+                    theme_text_color: "Primary"
+                    padding: [dp(20), dp(10)]
+                
+                MDTextButton:
+                    text: "Saved Plans"
+                    on_release: app.switch_to_saved_plans()
+                    theme_text_color: "Primary"
+                    padding: [dp(20), dp(10)]
+
+                MDTextButton:
+                    text: "Workout History"
+                    on_release: app.switch_to_history()
+                    theme_text_color: "Primary"
+                    padding: [dp(20), dp(10)]
+                
+                Widget:
+                    size_hint_y: None
+                    height: dp(20)
+                
+                MDLabel:
+                    text: "Calendar"
+                    font_style: "H6"
+                    size_hint_y: None
+                    height: dp(40)
+                    padding: [dp(10), 0]
+
+# --- Custom Widget Class Definitions ---
+
+<WorkoutCard>:
+    orientation: 'vertical'
+    size_hint_y: None
+    height: "140dp"
+    padding: "15dp"
+    spacing: "8dp"
+    ripple_behavior: True
+    
+    MDLabel:
+        text: root.workout_name
+        theme_text_color: "Primary"
+        font_size: "18sp"
+        bold: True
+        size_hint_y: None
+        height: self.texture_size[1]
+    
+    MDLabel:
+        text: root.description
+        theme_text_color: "Secondary"
+        font_size: "14sp"
+        size_hint_y: None
+        height: self.texture_size[1]
+    
+    MDBoxLayout:
+        size_hint_y: None
+        height: "20dp"
+        spacing: "10dp"
+        
+        MDLabel:
+            text: "Duration: " + root.duration
+            theme_text_color: "Secondary"
+            font_size: "12sp"
+        
+        MDLabel:
+            text: "Level: " + root.difficulty
+            theme_text_color: "Secondary"
+            font_size: "12sp"
+
+<WorkoutDetailContent>:
+    orientation: 'vertical'
+    padding: "20dp"
+    spacing: "10dp"
+    size_hint_y: None
+    height: self.minimum_height
+
+<CalendarDayButton>:
+    anchor_x: 'center'
+    anchor_y: 'center'
+    size_hint: None, None
+    size: dp(36), dp(36)
+    padding: [0, dp(2), dp(5), 0]
+    
+    MDLabel:
+        id: label
+        text: root.text
+        halign: "center"
+        adaptive_size: True
+        theme_text_color: "Custom"
+        text_color: root.text_color
+
+<PlanListItem>:
+    text: self.plan_name
+    on_release: self.view_plan()
+
+<BackgroundBoxLayout>:
+    orientation: 'vertical'
+
+<CircularTimer>:
+    orientation: 'vertical'
+    size_hint: None, None
+    size: dp(100), dp(100)
