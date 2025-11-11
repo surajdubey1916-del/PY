@@ -14,33 +14,33 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install system dependencies
         run: |
           sudo apt update
-          sudo apt install -y python3-pip python3-setuptools git zip
+          sudo apt install -y python3-pip python3-setuptools git zip unzip wget openjdk-17-jdk
 
       - name: Install buildozer
         run: |
           pip install --upgrade pip
-          pip install buildozer
+          pip install buildozer cython
 
-      - name: Install Android SDK/NDK
+      - name: Install Android SDK + Build Tools
         run: |
-          sudo apt-get install -y openjdk-17-jdk
-          wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdtools.zip
-          unzip cmdtools.zip -d android_cmdline
-          mkdir -p $HOME/Android/sdk
-          mv android_cmdline/cmdline-tools $HOME/Android/sdk/cmdline-tools
-          mv $HOME/Android/sdk/cmdline-tools $HOME/Android/sdk/cmdline-tools/latest
-          yes | $HOME/Android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
-          $HOME/Android/sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34" "ndk;25.1.8937393"
+          mkdir -p $HOME/android-sdk/cmdline-tools
+          cd $HOME/android-sdk/cmdline-tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O tools.zip
+          unzip tools.zip
+          mv cmdline-tools latest || true
+          yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+          $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0" "ndk;25.1.8937393"
 
       - name: Build APK
+        env:
+          ANDROIDSDK: $HOME/android-sdk
+          ANDROIDNDK: $HOME/android-sdk/ndk/25.1.8937393
         run: |
-          export ANDROIDSDK="$HOME/Android/sdk"
-          export ANDROIDNDK="$ANDROIDSDK/ndk/25.1.8937393"
           buildozer android debug
 
       - name: Upload APK
