@@ -56,6 +56,8 @@ jobs:
           ANDROIDNDK: $HOME/android-sdk/ndk/25.1.8937393
           PATH: $HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:$PATH
         run: |
+          sudo apt install -y git  # Ensure git exists
+          git --version
           buildozer android debug
 
       - name: Upload APK
