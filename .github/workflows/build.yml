@@ -41,17 +41,20 @@ jobs:
               "build-tools;34.0.0" \
               "ndk;25.1.8937393"
 
+          echo "✅ Android SDK Installed"
           ls -R $HOME/android-sdk
 
-      - name: Fix AIDL PATH
+      - name: Fix SDK Path for Buildozer
         run: |
-          mkdir -p /home/runner/.buildozer/android/platform/android-sdk
-          ln -sf $HOME/android-sdk/build-tools /home/runner/.buildozer/android/platform/android-sdk/build-tools
+          mkdir -p /home/runner/.buildozer/android/platform/
+          ln -sf $HOME/android-sdk /home/runner/.buildozer/android/platform/android-sdk
+          echo "✅ SDK path linked for Buildozer"
 
       - name: Build APK
         env:
           ANDROIDSDK: $HOME/android-sdk
           ANDROIDNDK: $HOME/android-sdk/ndk/25.1.8937393
+          PATH: $HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:$PATH
         run: |
           buildozer android debug
 
