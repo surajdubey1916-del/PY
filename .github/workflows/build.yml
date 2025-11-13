@@ -18,8 +18,8 @@ jobs:
 
       - name: Install system dependencies
         run: |
-          sudo apt update
-          sudo apt install -y python3-pip python3-setuptools git zip unzip wget openjdk-17-jdk
+          apt update
+          apt install -y python3-pip python3-setuptools git zip unzip wget openjdk-17-jdk
 
       - name: Install buildozer
         run: |
@@ -41,22 +41,22 @@ jobs:
               "build-tools;34.0.0" \
               "ndk;25.1.8937393"
 
-          echo "✅ Android SDK Installed"
           ls -R $HOME/android-sdk
 
-      - name: Fix SDK Path for Buildozer
+      - name: Fix AIDL PATH
         run: |
-          mkdir -p /home/runner/.buildozer/android/platform/
-          ln -sf $HOME/android-sdk /home/runner/.buildozer/android/platform/android-sdk
-          echo "✅ SDK path linked for Buildozer"
+          mkdir -p /home/runner/.buildozer/android/platform/android-sdk
+          ln -sf $HOME/android-sdk/build-tools /home/runner/.buildozer/android/platform/android-sdk/build-tools
 
+      # ✅ FIXED SECTION: Build APK without sudo
       - name: Build APK
         env:
           ANDROIDSDK: $HOME/android-sdk
           ANDROIDNDK: $HOME/android-sdk/ndk/25.1.8937393
           PATH: $HOME/android-sdk/cmdline-tools/latest/bin:$HOME/android-sdk/platform-tools:$PATH
         run: |
-          sudo apt install -y git  # Ensure git exists
+          apt update
+          apt install -y git  # ensure git is installed
           git --version
           buildozer android debug
 
